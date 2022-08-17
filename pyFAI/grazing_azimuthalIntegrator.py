@@ -35,32 +35,63 @@ __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
 from pyFAI.grazing_geometry import GrazingGeometry
-
+from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
+import logging
 logger = logging.getLogger(__name__)
+import warnings
+import threading
+import gc
+from math import pi, log
+import numpy
+from numpy import rad2deg
+from .geometry import Geometry
+from . import units
+from .utils import EPS32, deg2rad, crc32
+from .utils.decorators import deprecated, deprecated_warning
+from .containers import Integrate1dResult, Integrate2dResult, SeparateResult, ErrorModel
+from .io import DefaultAiWriter
+error = None
+from .method_registry import IntegrationMethod
+
+from .engines.preproc import preproc as preproc_np
+
+try:
+    from .ext.preproc import preproc as preproc_cy
+except ImportError as err:
+    logger.warning("ImportError pyFAI.ext.preproc %s", err)
+    preproc = preproc_np
+else:
+    preproc = preproc_cy
+
+from .load_integrators import ocl_azim_csr, ocl_azim_lut, ocl_sort, histogram, splitBBox, \
+                                splitPixel, splitBBoxCSR, splitBBoxLUT, splitPixelFullCSR, \
+                                histogram_engine, splitPixelFullLUT
+from .engines import Engine
 
 
-
-class GrazingAzimuthalIntegrator(GrazingGeometry):
+class GrazingAzimuthalIntegrator(GrazingGeometry, AzimuthalIntegrator):
     """
 
     """
 
 
     def __init__(self, dist=1, poni1=0, poni2=0, rot1=0, rot2=0, rot3=0,
-             pixel1=0, pixel2=0, splinefile=None, detector=None,
+             pixel1=0, pixel2=0, splineFile=None, detector=None,
              wavelength=None,
              useqx=True, sample_orientation=1, incident_angle=None,
              tilt_angle=0):
 
-         GrazingGeometry.__init__(self, dist, poni1, poni2,
-                           rot1, rot2, rot3,
-                           pixel1, pixel2, splineFile, detector, wavelength, useqx, sample_orientation, incident_angle, tilt_angle)
-
-
+        #Needs to be before GrazingGeometry as the useqx triggers a call to use _lock 
         self._lock = threading.Semaphore()
         self.engines = {}  # key: name of the engine,
 
         self._empty = 0.0
+
+        GrazingGeometry.__init__(self, dist, poni1, poni2,
+                           rot1, rot2, rot3,
+                           pixel1, pixel2, splineFile, detector, wavelength, useqx, sample_orientation, incident_angle, tilt_angle)
+
+
 
 
     def reset(self):

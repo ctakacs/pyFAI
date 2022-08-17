@@ -240,10 +240,10 @@ class Geometry(object):
         return False
 
     def normalize_azimuth_range(self, azimuth_range):
-        """Convert the azimuth range from degrees to radians 
-        
+        """Convert the azimuth range from degrees to radians
+
         This method takes care of the position of the discontinuity and adapts the range accordingly!
-        
+
         :param azimuth_range: 2-tuple of float in degrees
         :return: 2-tuple of float in radians in a range such to avoid the discontinuity
         """
@@ -262,7 +262,7 @@ class Geometry(object):
         :param p1: ndarray of dimention 1/1 containing the x pixel positions in meter. MODIFIED IN PLACE!
         :param p2: ndarray of dimention 1/2 containing the y pixel positions in meter. MODIFIED IN PLACE!
         :return: 2-arrays of same shape as d1 & d2 with the displacement in meters
-        
+
         d1, d2, p1 and p2 should all have the same shape !!!
         p1 and p2 get modified in place !
         """
@@ -1088,7 +1088,7 @@ class Geometry(object):
         Calculate the sinus of the incidence angle (alpha) for current pixels (P).
         The poni being the point of normal incidence,
         it's incidence angle is :math:`\\{alpha} = 0` hence :math:`sin(\\{alpha}) = 0`.
-        
+
         Works also for non-flat detectors where the normal of the pixel is considered.
 
         :param d1: 1d or 2d set of points in pixel coord
@@ -1119,7 +1119,7 @@ class Geometry(object):
         Calculate the cosinus of the incidence angle (alpha) for current pixels (P).
         The poni being the point of normal incidence,
         it's incidence angle is :math:`\\{alpha} = 0` hence :math:`cos(\\{alpha}) = 1`.
-        
+
         Works also for non-flat detectors where the normal of the pixel is considered.
 
         :param d1: 1d or 2d set of points in pixel coord
@@ -1352,7 +1352,7 @@ class Geometry(object):
     def getPyFAI(self):
         """
         Export geometry setup with the geometry of PyFAI
-        
+
         Deprecated, please use get/set_config which is cleaner! when it comes to detector specification
 
         :return: dict with the parameter-set of the PyFAI geometry
@@ -1372,7 +1372,7 @@ class Geometry(object):
     def setPyFAI(self, **kwargs):
         """
         set the geometry from a pyFAI-like dict
-        
+
         Deprecated, please use get/set_config which is cleaner! when it comes to detector specification
         """
         with self._sem:
@@ -1589,8 +1589,8 @@ class Geometry(object):
         """Export the current geometry in ImageD11 format.
         Please refer to the documentation in doc/source/geometry_conversion.rst
         for the orientation and units of those values.
-        
-        :return: an Ordered dict with those parameters:    
+
+        :return: an Ordered dict with those parameters:
             distance 294662.658 #in nm
             o11 1
             o12 0
@@ -1633,12 +1633,12 @@ class Geometry(object):
         return out
 
     def setImageD11(self, param):
-        """Set the geometry from the parameter set which contains distance, 
-        o11, o12, o21, o22, tilt_x, tilt_y tilt_z, wavelength, y_center, y_size, 
-        z_center and z_size. 
+        """Set the geometry from the parameter set which contains distance,
+        o11, o12, o21, o22, tilt_x, tilt_y tilt_z, wavelength, y_center, y_size,
+        z_center and z_size.
         Please refer to the documentation in doc/source/geometry_conversion.rst
         for the orientation and units of those values.
-        
+
         :param param: dict with the values to set.
         """
         o11 = param.get("o11")
@@ -1671,9 +1671,9 @@ class Geometry(object):
         return self
 
     def getCXI(self):
-        """Export the geometry in the CXI format as defined in 
+        """Export the geometry in the CXI format as defined in
         https://raw.githubusercontent.com/cxidb/CXI/master/cxi_file_format.pdf
-        
+
         :return: dict with the structure of a CXI file to be written into HDF5
         """
         cxi = {"cxi_version": 160}
@@ -1704,8 +1704,8 @@ class Geometry(object):
 
     def setCXI(self, dico):
         """Set the geometry of the azimuthal integrator from a CXI data structure (as dict)
-        
-        :param dico: dictionary with CXI information 
+
+        :param dico: dictionary with CXI information
         """
         detector = dico.get("detector_1", {})
         det = detectors.detector_factory(detector.get("description", "Detector"))
@@ -1905,7 +1905,7 @@ class Geometry(object):
         The axis_offset parameter allows correction for the misalignement of
         the polarization plane (or ellipse main axis) and the the detector's X axis.
 
-        :param shape: the shape of the array, 
+        :param shape: the shape of the array,
                     can be guessed most of the time from the detector definition
         :param factor: (Ih-Iv)/(Ih+Iv): varies between 0 (circular/random polarization)
                     and 1 (where division by 0 could occure at 2th=90, chi=0)
@@ -1913,7 +1913,7 @@ class Geometry(object):
                             detector's X direction (in radians !!!)
         :param with_checksum: calculate also the checksum (used with OpenCL integration)
         :param path: set to numpy to enforce the use of numpy, else uses numexpr (mutithreaded)
-        :return: 2D array with polarization correction (normalization) array 
+        :return: 2D array with polarization correction (normalization) array
                  or namedtuple if with_checksum
 
 

@@ -44,6 +44,22 @@ __docformat__ = 'restructuredtext'
 
 from pyFAI.geometry import Geometry
 
+import logging
+from math import pi
+from numpy import radians, degrees, arccos, arctan2, sin, cos, sqrt
+import numpy
+import os
+import threading
+import json
+from collections import namedtuple, OrderedDict
+from . import detectors
+from . import units
+from .utils.decorators import deprecated
+from .utils import crc32, deg2rad
+from . import utils
+from .io import ponifile, integration_config
+from .units import CONST_hc
+
 logger = logging.getLogger(__name__)
 
 class GrazingGeometry(Geometry):
